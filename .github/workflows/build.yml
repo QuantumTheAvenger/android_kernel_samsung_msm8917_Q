@@ -1,8 +1,6 @@
 name: J6Plus Kernel Build
 on:
-  push:
-    branches: [ "upstream/3.18.140-stable" ]
-  workflow_dispatch:
+  workflow_dispatch: # Sadece manuel başlatma butonu
 
 jobs:
   build:
@@ -11,6 +9,7 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
         with:
+          # Kendi branch ismini buraya yazdık
           ref: upstream/3.18.140-stable
 
       - name: Install Build Tools
@@ -26,11 +25,12 @@ jobs:
         run: |
           export ARCH=arm
           export CROSS_COMPILE=$(pwd)/toolchain/bin/arm-linux-androideabi-
-          make j6primelte_defconfig
+          # Hatalı config uyarısını engellemek için 'yes' komutu eklendi
+          yes "" | make j6primelte_defconfig
           make -j$(nproc)
 
-      - name: Upload Result
+      - name: Upload Kernel Result
         uses: actions/upload-artifact@v4
         with:
-          name: J6Plus-1.6GHz-Kernel
+          name: J6Plus-Overclock-Kernel
           path: arch/arm/boot/zImage-dtb
